@@ -35,7 +35,7 @@ RUN rm -rf \
     # Enable symlink for general testing from "make test"
     && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm
 
-COPY php7 nginx /
+COPY files/nginx files/php7 /
 
 # Support running s6 under a non-root user
 RUN mkdir -p /etc/s6/services/nginx/supervise \
