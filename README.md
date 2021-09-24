@@ -1,5 +1,7 @@
 # Docker Nginx + PHP FPM
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/ferri/nginx-fpm.svg?style=flat-square)](https://hub.docker.com/r/ferri/nginx-fpm/)
+
 Nginx and PHP FPM service in one image, based on Alpine and S6 Overlay.
 
 ## Usage
