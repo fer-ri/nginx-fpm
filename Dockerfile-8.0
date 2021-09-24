@@ -52,4 +52,4 @@ WORKDIR /var/www
 
 ENTRYPOINT ["/init"]
 
-HEALTHCHECK --interval=5s --timeout=5s CMD curl -f http://127.0.0.1/php-fpm-ping || exit 1
+HEALTHCHECK --interval=5s --timeout=5s CMD wget -nv -t1 --spider http://127.0.0.1:8080/php-fpm-ping || exit 1

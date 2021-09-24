@@ -19,7 +19,4 @@ test:
 	docker exec -t ferri_nginx_fpm php-fpm --version | grep -q "PHP $(TAG)"
 	wget -q localhost:8080 -O- | grep -q "PHP Version $(TAG)"
 
-publish:
-	if [ "$(TAG)" = "UNDEF" ]; then echo "Please provide a valid TAG" && exit 1; fi
-	build
-	push
+publish: build push
