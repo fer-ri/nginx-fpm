@@ -1,0 +1,55 @@
+FROM alpine:3.14
+
+ARG UID=1000
+ARG GID=1000
+
+# ENV S6_READ_ONLY_ROOT 1
+
+RUN apk add --upgrade --no-cache \
+    nginx \
+    s6-overlay \
+    tzdata
+
+RUN apk add --no-cache \
+    php7-fpm \
+    php7-bcmath \
+    php7-ctype \
+    php7-fileinfo \
+    php7-json \
+    php7-mbstring \
+    php7-openssl \
+    php7-pdo_mysql \
+    php7-tokenizer \
+    php7-xml \
+    php7-session \
+    php7-curl
+
+# Remove (some of the) default nginx config
+RUN rm -rf \
+    /etc/nginx.conf \
+    /etc/nginx/http.d/*.conf \
+    /etc/php7/php-fpm.d/www.conf \
+    /var/www/localhost \
+    # Ensure nginx logs, even if the config has errors, are written to stderr
+    && ln -s /dev/stderr /var/log/nginx/error.log \
+    # Enable symlink for general testing from "make test"
+    && ln -s /usr/sbin/php-fpm7 /usr/sbin/php-fpm
+
+COPY php7 nginx /
+
+# Support running s6 under a non-root user
+RUN mkdir -p /etc/s6/services/nginx/supervise \
+    mkdir -p /etc/s6/services/php-fpm7/supervise \
+    && mkfifo /etc/s6/services/nginx/supervise/control \
+    mkfifo /etc/s6/services/php-fpm7/supervise/control \
+    && chown -R ${UID}:${GID} /etc/s6 /run /var/lib/nginx /var/www \
+    && chmod o+rwx /run /var/lib/nginx /var/lib/nginx/tmp
+
+USER ${UID}:${GID}
+EXPOSE 8080/tcp
+VOLUME /run /tmp /var/lib/nginx/tmp
+WORKDIR /var/www
+
+ENTRYPOINT ["/init"]
+
+HEALTHCHECK --interval=5s --timeout=5s CMD curl -f http://127.0.0.1/php-fpm-ping || exit 1
