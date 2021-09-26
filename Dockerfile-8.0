@@ -12,6 +12,7 @@ RUN apk add --upgrade --no-cache \
 
 RUN apk add --no-cache \
     php8-fpm \
+    php8-cli \
     php8-bcmath \
     php8-ctype \
     php8-fileinfo \

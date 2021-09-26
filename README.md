@@ -42,12 +42,13 @@ These packages already included inside the image
 
 ## Production
 
-For production, consider to extend this image and adding `php-opcache` and enable the setting `opcache.*` from `00-docker.ini`
+For production, consider to extend this image and adding `php-opcache`, remove `php-cli` and enable the setting `opcache.*` from `00-docker.ini`
 
 ```Dockerfile
 FROM ferri/nginx-fpm:8.0
 
-RUN apk add --no-cache php8-opcache
+RUN apk add --no-cache php8-opcache \
+    && apk del php8-cli
 
 # Copy the newer setting that enabled opcache
 COPY files/php8 /
